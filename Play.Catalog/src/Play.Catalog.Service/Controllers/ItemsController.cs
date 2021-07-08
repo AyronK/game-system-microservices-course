@@ -27,7 +27,7 @@ namespace Play.Catalog.Service.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<IEnumerable<ItemDto>>> GetById(Guid id)
+        public async Task<ActionResult<ItemDto>> GetById(Guid id)
         {
             Item item = await _repository.Find(id);
 
