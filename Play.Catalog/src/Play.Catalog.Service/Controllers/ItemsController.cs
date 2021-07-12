@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Play.Catalog.Service.Core;
 using Play.Catalog.Service.Data;
 using Play.Catalog.Service.Data.Entities;
+using Play.Common.Core;
 
 namespace Play.Catalog.Service.Controllers
 {
@@ -30,7 +30,7 @@ namespace Play.Catalog.Service.Controllers
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<ItemDto>> GetById(Guid id)
         {
-            Item item = await _repository.Find(id);
+            Item item = await _repository.Get(id);
 
             return item switch
             {
@@ -61,7 +61,7 @@ namespace Play.Catalog.Service.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, UpdateItemDto dto)
         {
-            Item existingItem = await _repository.Find(id);
+            Item existingItem = await _repository.Get(id);
             
             if (existingItem is null)
             {
@@ -86,7 +86,7 @@ namespace Play.Catalog.Service.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            Item existingItem = await _repository.Find(id);
+            Item existingItem = await _repository.Get(id);
             
             if (existingItem is null)
             {

@@ -5,11 +5,10 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
-using Play.Catalog.Service.Core;
-using Play.Catalog.Service.Data.Repositories.MongoDb;
-using Play.Catalog.Service.Settings;
+using Play.Common.Core;
+using Play.Common.Settings;
 
-namespace Play.Catalog.Service.Data.Repositories.Extensions
+namespace Play.Common.MongoDb
 {
     public static class Extensions
     {

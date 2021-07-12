@@ -1,4 +1,4 @@
-namespace Play.Catalog.Service.Core
+namespace Play.Common.Core
 {
     public interface IEntity<TId>
     {

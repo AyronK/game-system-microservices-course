@@ -1,12 +1,16 @@
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace Play.Catalog.Service.Core
+namespace Play.Common.Core
 {
     public interface IRepository<TId, TEntity> where TEntity : class, IEntity<TId> 
     {
         Task<IEnumerable<TEntity>> GetAll();
-        Task<TEntity> Find(TId id);
+        Task<IEnumerable<TEntity>> GetAll(Expression<Func<TEntity, bool>> filter);
+        Task<TEntity> Get(TId id);
+        Task<TEntity> Get(Expression<Func<TEntity, bool>> filter);
         Task<TId> Add(TEntity item);
         Task Update(TId id, TEntity item);
         Task Remove(TId id);

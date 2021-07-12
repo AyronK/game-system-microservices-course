@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6C3B6362-3BF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Play.Catalog.Service", "Play.Catalog\src\Play.Catalog.Service\Play.Catalog.Service.csproj", "{163E7282-61B7-420C-A938-841FB7668E44}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Play.Common", "Play.Common\src\Play.Common\Play.Common.csproj", "{18B57045-19F8-45D2-A811-50D61613D513}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,18 @@ Global
 		{163E7282-61B7-420C-A938-841FB7668E44}.Release|x64.Build.0 = Release|Any CPU
 		{163E7282-61B7-420C-A938-841FB7668E44}.Release|x86.ActiveCfg = Release|Any CPU
 		{163E7282-61B7-420C-A938-841FB7668E44}.Release|x86.Build.0 = Release|Any CPU
+		{18B57045-19F8-45D2-A811-50D61613D513}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18B57045-19F8-45D2-A811-50D61613D513}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18B57045-19F8-45D2-A811-50D61613D513}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{18B57045-19F8-45D2-A811-50D61613D513}.Debug|x64.Build.0 = Debug|Any CPU
+		{18B57045-19F8-45D2-A811-50D61613D513}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{18B57045-19F8-45D2-A811-50D61613D513}.Debug|x86.Build.0 = Debug|Any CPU
+		{18B57045-19F8-45D2-A811-50D61613D513}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18B57045-19F8-45D2-A811-50D61613D513}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18B57045-19F8-45D2-A811-50D61613D513}.Release|x64.ActiveCfg = Release|Any CPU
+		{18B57045-19F8-45D2-A811-50D61613D513}.Release|x64.Build.0 = Release|Any CPU
+		{18B57045-19F8-45D2-A811-50D61613D513}.Release|x86.ActiveCfg = Release|Any CPU
+		{18B57045-19F8-45D2-A811-50D61613D513}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6C3B6362-3BF1-4BAB-92D0-4DF9E1A56858} = {E41519FA-2B4C-4FB0-A59D-E71FC3AE450B}

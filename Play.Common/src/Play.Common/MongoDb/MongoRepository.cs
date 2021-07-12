@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MongoDB.Driver;
-using Play.Catalog.Service.Core;
+using Play.Common.Core;
 
-namespace Play.Catalog.Service.Data.Repositories.MongoDb
+namespace Play.Common.MongoDb
 {
     public class MongoRepository<TEntity> : IRepository<Guid, TEntity> where TEntity : class, IEntity<Guid>
     {
@@ -21,10 +22,20 @@ namespace Play.Catalog.Service.Data.Repositories.MongoDb
             return await _dbCollection.Find(_filterBuilder.Empty).ToListAsync();
         }
 
-        public async Task<TEntity> Find(Guid id)
+        public async Task<IEnumerable<TEntity>> GetAll(Expression<Func<TEntity, bool>> filter)
+        {
+            return await _dbCollection.Find(filter).ToListAsync();
+        }
+
+        public async Task<TEntity> Get(Guid id)
         {
             FilterDefinition<TEntity> filterById = _filterBuilder.Eq(entity => entity.Id, id);
             return await _dbCollection.Find(filterById).SingleOrDefaultAsync();
+        }
+
+        public async Task<TEntity> Get(Expression<Func<TEntity, bool>> filter)
+        {
+            return await _dbCollection.Find(filter).SingleOrDefaultAsync();
         }
 
         public async Task<Guid> Add(TEntity item)
