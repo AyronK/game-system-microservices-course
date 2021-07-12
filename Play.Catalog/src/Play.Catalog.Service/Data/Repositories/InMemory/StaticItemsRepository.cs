@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Play.Catalog.Service.Core;
+using Play.Catalog.Service.Data.Entities;
 
-namespace Play.Catalog.Service.Data
+namespace Play.Catalog.Service.Data.Repositories.InMemory
 {
     public class StaticItemsRepository : IRepository<Guid, Item>
     {
@@ -22,28 +23,23 @@ namespace Play.Catalog.Service.Data
             return Task.FromResult(Items.SingleOrDefault(i => i.Id == id));
         }
 
-        public Task<bool> Contains(Guid id)
-        {
-            return Task.FromResult(Items.SingleOrDefault(i => i.Id == id) is not null);
-        }
-
         public Task<IEnumerable<Item>> GetAll()
         {
             return Task.FromResult(Items.AsEnumerable());
         }
 
-        public Task<Item> Add(Item item)
+        public Task<Guid> Add(Item item)
         {
             Item newItem = item with { Id = Guid.NewGuid(), CreatedDate = DateTimeOffset.UtcNow, UpdatedDate = DateTimeOffset.UtcNow };
             Items.Add(newItem);
-            return Task.FromResult(newItem);
+            return Task.FromResult(newItem.Id);
         }
 
-        public Task<Item> Update(Guid id, Item item)
+        public Task Update(Guid id, Item item)
         {
             int index = Items.FindIndex(i => i.Id == id);
             Items[index] =  Items[index] with { Name = item.Name, Description = item.Description, Price = item.Price, UpdatedDate = DateTimeOffset.UtcNow };
-            return Task.FromResult(Items[index]);
+            return Task.CompletedTask;
         }
 
         public Task Remove(Guid id)

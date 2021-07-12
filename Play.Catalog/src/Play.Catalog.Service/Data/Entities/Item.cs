@@ -1,7 +1,7 @@
 using System;
 using Play.Catalog.Service.Core;
 
-namespace Play.Catalog.Service.Data
+namespace Play.Catalog.Service.Data.Entities
 {
     public record Item : IEntity<Guid>
     {

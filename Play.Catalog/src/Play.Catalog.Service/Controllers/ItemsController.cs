@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Play.Catalog.Service.Core;
 using Play.Catalog.Service.Data;
+using Play.Catalog.Service.Data.Entities;
 
 namespace Play.Catalog.Service.Controllers
 {
@@ -14,16 +15,16 @@ namespace Play.Catalog.Service.Controllers
     {
         private readonly IRepository<Guid, Item> _repository;
 
-        public ItemsController()
+        public ItemsController(IRepository<Guid, Item> repository)
         {
-            _repository = new StaticItemsRepository();
+            _repository = repository;
         }
         
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ItemDto>>> Get()
         {
             IEnumerable<Item> items = await _repository.GetAll();
-            return Ok(items.Select(i => i.MapToDto()));
+            return Ok(items.Select(i => i.AsDto()));
         }
 
         [HttpGet("{id:guid}")]
@@ -34,38 +35,64 @@ namespace Play.Catalog.Service.Controllers
             return item switch
             {
                 null => NotFound(),
-                _ => Ok(item.MapToDto()),
+                _ => Ok(item.AsDto()),
             };
         }
 
         [HttpPost]
         public async Task<ActionResult<ItemDto>> Create(CreateItemDto dto)
         {
-            Item createdItem = await _repository.Add(dto.ToItem());
+            DateTimeOffset createdDate = DateTimeOffset.UtcNow;
+            Item itemToAdd = new()
+            {
+                Description = dto.Description,
+                Name = dto.Name,
+                Price = dto.Price,
+                CreatedDate = createdDate,
+                UpdatedDate = createdDate
+            };
+            
+            Guid createdItemId = await _repository.Add(itemToAdd);
+            Item createdItem = itemToAdd with { Id = createdItemId };
+            
             return CreatedAtAction(nameof(GetById), new { id = createdItem.Id }, createdItem);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, UpdateItemDto dto)
         {
-            if (!await _repository.Contains(id))
+            Item existingItem = await _repository.Find(id);
+            
+            if (existingItem is null)
             {
                 return NotFound();
             }
+
+            Item itemToUpdate = existingItem with
+            {
+                Description = dto.Description,
+                Name = dto.Name,
+                Price = dto.Price,
+                UpdatedDate = DateTimeOffset.UtcNow
+            };
             
-            await _repository.Update(id, dto.ToItem());
+            await _repository.Update(id, itemToUpdate);
+            
             return NoContent();
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            if (!await _repository.Contains(id))
+            Item existingItem = await _repository.Find(id);
+            
+            if (existingItem is null)
             {
                 return NotFound();
             }
             
             await _repository.Remove(id);
+            
             return NoContent();
         }
     }
