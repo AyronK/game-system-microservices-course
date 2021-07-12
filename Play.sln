@@ -11,6 +11,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Play.Catalog.Service", "Pla
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Play.Common", "Play.Common\src\Play.Common\Play.Common.csproj", "{18B57045-19F8-45D2-A811-50D61613D513}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Play.Common", "Play.Common", "{51F95B2B-DDA5-4DA7-92E9-5D0D65E1D801}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9F60F428-59C4-4C4E-8D7A-7D8881400445}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{87C82C4A-6BE5-4350-80F5-95098F477B83}"
+ProjectSection(SolutionItems) = preProject
+	docker\docker-compose.yml = docker\docker-compose.yml
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,5 +61,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{6C3B6362-3BF1-4BAB-92D0-4DF9E1A56858} = {E41519FA-2B4C-4FB0-A59D-E71FC3AE450B}
 		{163E7282-61B7-420C-A938-841FB7668E44} = {6C3B6362-3BF1-4BAB-92D0-4DF9E1A56858}
+		{9F60F428-59C4-4C4E-8D7A-7D8881400445} = {51F95B2B-DDA5-4DA7-92E9-5D0D65E1D801}
+		{18B57045-19F8-45D2-A811-50D61613D513} = {9F60F428-59C4-4C4E-8D7A-7D8881400445}
 	EndGlobalSection
 EndGlobal
