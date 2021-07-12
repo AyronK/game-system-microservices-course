@@ -53,9 +53,9 @@ namespace Play.Catalog.Service.Controllers
             };
             
             Guid createdItemId = await _repository.Add(itemToAdd);
-            Item createdItem = itemToAdd with { Id = createdItemId };
+            itemToAdd.Id = createdItemId;
             
-            return CreatedAtAction(nameof(GetById), new { id = createdItem.Id }, createdItem);
+            return CreatedAtAction(nameof(GetById), new { id = itemToAdd.Id }, itemToAdd);
         }
 
         [HttpPut("{id:guid}")]
@@ -68,11 +68,13 @@ namespace Play.Catalog.Service.Controllers
                 return NotFound();
             }
 
-            Item itemToUpdate = existingItem with
+            Item itemToUpdate = new()
             {
+                Id = existingItem.Id,
                 Description = dto.Description,
                 Name = dto.Name,
                 Price = dto.Price,
+                CreatedDate = existingItem.CreatedDate,
                 UpdatedDate = DateTimeOffset.UtcNow
             };
             

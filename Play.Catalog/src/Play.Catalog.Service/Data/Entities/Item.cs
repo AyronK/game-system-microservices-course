@@ -3,13 +3,13 @@ using Play.Catalog.Service.Core;
 
 namespace Play.Catalog.Service.Data.Entities
 {
-    public record Item : IEntity<Guid>
+    public class Item : IEntity<Guid>
     {
-        public Guid Id { get; init; }
-        public string Name { get; init; }
-        public string Description { get; init; }
-        public decimal Price { get; init; }
-        public DateTimeOffset CreatedDate { get; init; }
-        public DateTimeOffset UpdatedDate { get; init; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+        public DateTimeOffset CreatedDate { get; set; }
+        public DateTimeOffset UpdatedDate { get; set; }
     }
 }
