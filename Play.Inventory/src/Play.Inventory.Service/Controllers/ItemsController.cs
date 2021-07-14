@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Play.Common.Core;
+using Play.Inventory.Service.Clients;
 using Play.Inventory.Service.Data;
 using Play.Inventory.Service.Data.Entities;
 using Play.Inventory.Service.Play.Inventory.Service.Dtos;
@@ -15,10 +16,12 @@ namespace Play.Inventory.Service.Controllers
     public class ItemsController : ControllerBase
     {
         private readonly IRepository<Guid, InventoryItem> _itemsRepository;
-
-        public ItemsController(IRepository<Guid, InventoryItem> itemsRepository)
+        private readonly CatalogClient _catalogClient;
+        
+        public ItemsController(IRepository<Guid, InventoryItem> itemsRepository, CatalogClient catalogClient)
         {
             _itemsRepository = itemsRepository;
+            _catalogClient = catalogClient;
         }
 
         [HttpGet("{userId:guid}")]
@@ -28,11 +31,19 @@ namespace Play.Inventory.Service.Controllers
             {
                 return BadRequest();
             }
-            
-            IEnumerable<InventoryItem> items = await _itemsRepository.GetAll(i => i.UserId == userId);
-            IEnumerable<InventoryItemDto> dtos = items.Select(i => i.AsDto());
 
-            return Ok(dtos);
+            IReadOnlyCollection<CatalogItemDto> catalogItems = await _catalogClient.GetCatalogItems();
+            IEnumerable<InventoryItem> inventoryItems = await _itemsRepository.GetAll(i => i.UserId == userId);
+            
+            IEnumerable<InventoryItemDto> inventoryItemsDtos = inventoryItems.Select(selector: inventoryItem =>
+            {
+                (_, string name, string description) = catalogItems
+                    .Single(catalogItem => catalogItem.Id == inventoryItem.CatalogItemId);
+                
+                return inventoryItem.AsDto(name, description);
+            });
+
+            return Ok(inventoryItemsDtos);
         }
 
         [HttpPost]

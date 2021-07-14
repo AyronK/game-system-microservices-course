@@ -9,18 +9,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Play.Common.MongoDb;
+using Play.Inventory.Service.Clients;
 using Play.Inventory.Service.Data.Entities;
+using Play.Inventory.Service.Settings;
 
 namespace Play.Inventory.Service
 {
     public class Startup
     {
+        private readonly CommunicationSettings _communicationSettings;
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            _communicationSettings = Configuration.GetSection(nameof(CommunicationSettings)).Get<CommunicationSettings>();
         }
 
         public IConfiguration Configuration { get; }
@@ -31,6 +35,11 @@ namespace Play.Inventory.Service
             services
                 .AddMongo()
                 .AddMongoRepository<InventoryItem>("inventoryItems");
+
+            services.AddHttpClient<CatalogClient>(client =>
+            {
+                client.BaseAddress = _communicationSettings.Catalog.Uri;
+            });
             
             services.AddControllers();
             services.AddSwaggerGen(c =>

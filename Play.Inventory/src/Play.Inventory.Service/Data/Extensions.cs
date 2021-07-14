@@ -5,7 +5,7 @@ namespace Play.Inventory.Service.Data
 {
     public static class Extensions
     {
-        public static InventoryItemDto AsDto(this InventoryItem inventoryItem) 
-            => new(inventoryItem.CatalogItemId, inventoryItem.Quantity, inventoryItem.AcquiredDate);
+        public static InventoryItemDto AsDto(this InventoryItem inventoryItem, string name, string description) 
+            => new(inventoryItem.CatalogItemId, inventoryItem.Quantity, inventoryItem.AcquiredDate, name, description);
     }
 }
