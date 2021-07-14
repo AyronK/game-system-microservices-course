@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +10,8 @@ using Play.Common.MongoDb;
 using Play.Inventory.Service.Clients;
 using Play.Inventory.Service.Data.Entities;
 using Play.Inventory.Service.Settings;
+using Polly;
+using Polly.Timeout;
 
 namespace Play.Inventory.Service
 {
@@ -39,7 +37,12 @@ namespace Play.Inventory.Service
             services.AddHttpClient<CatalogClient>(client =>
             {
                 client.BaseAddress = _communicationSettings.Catalog.Uri;
-            });
+            })
+            .AddTransientHttpErrorPolicy(builder => builder.Or<TimeoutRejectedException>().WaitAndRetryAsync(
+                retryCount: 5,
+                retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+            ))
+            .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(1));
             
             services.AddControllers();
             services.AddSwaggerGen(c =>
