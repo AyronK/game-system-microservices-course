@@ -34,13 +34,15 @@ namespace Play.Inventory.Service
                 .AddMongo()
                 .AddMongoRepository<InventoryItem>("inventoryItems");
 
+            Random jitterer = new Random();
+            
             services.AddHttpClient<CatalogClient>(client =>
             {
                 client.BaseAddress = _communicationSettings.Catalog.Uri;
             })
             .AddTransientHttpErrorPolicy(builder => builder.Or<TimeoutRejectedException>().WaitAndRetryAsync(
                 retryCount: 5,
-                retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+                retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) + TimeSpan.FromMilliseconds(jitterer.Next(0, 1000))
             ))
             .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(1));
             
