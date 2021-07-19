@@ -1,4 +1,6 @@
+using System;
 using System.Reflection;
+using GreenPipes;
 using MassTransit;
 using MassTransit.Definition;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +25,10 @@ namespace Play.Common.MassTransit
                     
                     config.Host(rabbitMqSettings.Host);
                     config.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter(serviceSettings.ServiceName, false));
+                    config.UseMessageRetry(retryConfig =>
+                    {
+                        retryConfig.Interval(3, TimeSpan.FromSeconds(5));
+                    });
                 });
             });
 
