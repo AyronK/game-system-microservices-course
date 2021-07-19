@@ -47,8 +47,10 @@ namespace Play.Catalog.Service.Controllers
         public async Task<ActionResult<ItemDto>> Create(CreateItemDto dto)
         {
             DateTimeOffset createdDate = DateTimeOffset.UtcNow;
+            
             Item item = new()
             {
+                Id = Guid.NewGuid(),
                 Description = dto.Description,
                 Name = dto.Name,
                 Price = dto.Price,
@@ -56,9 +58,7 @@ namespace Play.Catalog.Service.Controllers
                 UpdatedDate = createdDate
             };
             
-            Guid createdItemId = await _repository.Add(item);
-            item.Id = createdItemId;
-
+            await _repository.Add(item);
             await _publishEndpoint.Publish(new CatalogItemCreated(item.Id, item.Name, item.Description, item.Price));
             
             return CreatedAtAction(nameof(GetById), new { id = item.Id }, item);

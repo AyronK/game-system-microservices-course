@@ -11,7 +11,7 @@ namespace Play.Common.Core
         Task<IEnumerable<TEntity>> GetAll(Expression<Func<TEntity, bool>> filter);
         Task<TEntity> Get(TId id);
         Task<TEntity> Get(Expression<Func<TEntity, bool>> filter);
-        Task<TId> Add(TEntity item);
+        Task Add(TEntity item);
         Task Update(TEntity item);
         Task Remove(TId id);
     }

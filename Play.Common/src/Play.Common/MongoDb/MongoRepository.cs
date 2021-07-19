@@ -38,16 +38,14 @@ namespace Play.Common.MongoDb
             return await _dbCollection.Find(filter).SingleOrDefaultAsync();
         }
 
-        public async Task<Guid> Add(TEntity item)
+        public async Task Add(TEntity item)
         {
             if (item == null)
             {
                 throw new ArgumentNullException(nameof(item));
             }
 
-            item.Id = Guid.NewGuid();
             await _dbCollection.InsertOneAsync(item);
-            return item.Id;
         }
 
         public async Task Update(TEntity item)

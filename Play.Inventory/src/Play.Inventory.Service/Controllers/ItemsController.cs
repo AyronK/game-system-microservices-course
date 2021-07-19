@@ -34,7 +34,7 @@ namespace Play.Inventory.Service.Controllers
 
             InventoryItem[] inventoryItems = (await _inventoryItemsRepository.GetAll(inventoryItem => inventoryItem.UserId == userId)).ToArray();
             IEnumerable<Guid> ids = inventoryItems.Select(inventoryItem => inventoryItem.CatalogItemId);
-            IEnumerable<CatalogItem> catalogItems = await _catalogItemsRepository.GetAll(catalogItem => ids.Contains(catalogItem.Id));
+            IEnumerable<CatalogItem> catalogItems = await _catalogItemsRepository.GetAll(item => ids.Contains(item.Id));
             
             IEnumerable<InventoryItemDto> inventoryItemsDtos = inventoryItems.Select(inventoryItem =>
             {
@@ -51,6 +51,13 @@ namespace Play.Inventory.Service.Controllers
             InventoryItem inventoryItem = await _inventoryItemsRepository
                 .Get(i => i.UserId == dto.UserId && i.CatalogItemId == dto.CatalogItemId);
 
+            var catalogItem = await _catalogItemsRepository.Get(dto.CatalogItemId);
+            
+            if (catalogItem is null)
+            {
+                return BadRequest($"Catalog item with id '{dto.CatalogItemId}' does not exist.");
+            }
+            
             if (inventoryItem is null)
             {
                 inventoryItem = new InventoryItem
