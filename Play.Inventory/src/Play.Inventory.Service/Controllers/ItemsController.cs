@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Play.Common.Core;
-using Play.Inventory.Service.Clients;
 using Play.Inventory.Service.Data;
 using Play.Inventory.Service.Data.Entities;
 using Play.Inventory.Service.Play.Inventory.Service.Dtos;
@@ -24,7 +23,7 @@ namespace Play.Inventory.Service.Controllers
             _catalogItemsRepository = catalogItemsRepository;
         }
 
-        [HttpGet("{userId:guid}")]
+        [HttpGet]
         public async Task<ActionResult<InventoryItemDto>> Get(Guid userId)
         {
             if (userId == Guid.Empty)

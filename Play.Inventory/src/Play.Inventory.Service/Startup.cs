@@ -18,6 +18,7 @@ namespace Play.Inventory.Service
 {
     public class Startup
     {
+        private const string AllowOriginSetting = "AllowedOrigin";
         private readonly CommunicationSettings _communicationSettings;
         
         public Startup(IConfiguration configuration)
@@ -62,6 +63,16 @@ namespace Play.Inventory.Service
             app.UseRouting();
 
             app.UseAuthorization();
+
+            if (env.IsDevelopment())
+            {
+                app.UseCors(builder =>
+                {
+                    builder.WithOrigins(Configuration[AllowOriginSetting])
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            }
 
             app.UseEndpoints(endpoints =>
             {

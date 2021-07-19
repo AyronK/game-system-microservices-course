@@ -7,12 +7,13 @@ using Microsoft.OpenApi.Models;
 using Play.Catalog.Service.Data.Entities;
 using Play.Common.MassTransit;
 using Play.Common.MongoDb;
-using Play.Common.Settings;
 
 namespace Play.Catalog.Service
 {
     public class Startup
     {
+        private const string AllowOriginSetting = "AllowedOrigin";
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -51,6 +52,16 @@ namespace Play.Catalog.Service
             app.UseRouting();
 
             app.UseAuthorization();
+
+            if (env.IsDevelopment())
+            {
+                app.UseCors(builder =>
+                {
+                    builder.WithOrigins(Configuration[AllowOriginSetting])
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            }
 
             app.UseEndpoints(endpoints =>
             {
