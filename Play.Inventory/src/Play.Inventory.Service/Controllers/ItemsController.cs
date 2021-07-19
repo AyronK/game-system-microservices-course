@@ -67,7 +67,7 @@ namespace Play.Inventory.Service.Controllers
             else
             {
                 inventoryItem.Quantity += dto.Quantity;
-                await _itemsRepository.Update(inventoryItem.Id, inventoryItem);
+                await _itemsRepository.Update(inventoryItem);
             }
 
             return Ok();

@@ -84,7 +84,7 @@ namespace Play.Catalog.Service.Controllers
                 UpdatedDate = DateTimeOffset.UtcNow
             };
             
-            await _repository.Update(id, item);
+            await _repository.Update(item);
             await _publishEndpoint.Publish(new CatalogItemUpdated(item.Id, item.Name, item.Description, item.Price));
             
             return NoContent();

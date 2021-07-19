@@ -50,14 +50,14 @@ namespace Play.Common.MongoDb
             return item.Id;
         }
 
-        public async Task Update(Guid id, TEntity item)
+        public async Task Update(TEntity item)
         {
             if (item == null)
             {
                 throw new ArgumentNullException(nameof(item));
             }
             
-            FilterDefinition<TEntity> filterById = _filterBuilder.Eq(existingEntity => existingEntity.Id, id);
+            FilterDefinition<TEntity> filterById = _filterBuilder.Eq(existingEntity => existingEntity.Id, item.Id);
             await _dbCollection.ReplaceOneAsync(filterById, item);
         }
 

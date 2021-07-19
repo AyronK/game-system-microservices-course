@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Play.Common.MassTransit;
 using Play.Common.MongoDb;
 using Play.Inventory.Service.Clients;
 using Play.Inventory.Service.Data.Entities;
@@ -32,24 +33,13 @@ namespace Play.Inventory.Service
         {
             services
                 .AddMongo()
-                .AddMongoRepository<InventoryItem>("inventoryItems");
+                .AddMongoRepository<InventoryItem>("inventoryItems")
+                .AddMongoRepository<CatalogItem>("catalogItems");
 
-            Random jitterer = new Random();
-            
-            services.AddHttpClient<CatalogClient>(client =>
-            {
-                client.BaseAddress = _communicationSettings.Catalog.Uri;
-            })
-            .AddTransientHttpErrorPolicy(builder => builder.Or<TimeoutRejectedException>().WaitAndRetryAsync(
-                retryCount: 5,
-                retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) + TimeSpan.FromMilliseconds(jitterer.Next(0, 1000))
-            ))
-            .AddTransientHttpErrorPolicy(builder => builder.Or<TimeoutRejectedException>().CircuitBreakerAsync(
-                3,
-                TimeSpan.FromSeconds(15)
-            ))
-            .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(1));
-            
+            services.AddMassTransitWithRabbitMQ();
+
+            AddCatalogClient(services);
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -77,6 +67,22 @@ namespace Play.Inventory.Service
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private void AddCatalogClient(IServiceCollection services)
+        {
+            Random jitterer = new Random();
+
+            services.AddHttpClient<CatalogClient>(client => { client.BaseAddress = _communicationSettings.Catalog.Uri; })
+                .AddTransientHttpErrorPolicy(builder => builder.Or<TimeoutRejectedException>().WaitAndRetryAsync(
+                    retryCount: 5,
+                    retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) + TimeSpan.FromMilliseconds(jitterer.Next(0, 1000))
+                ))
+                .AddTransientHttpErrorPolicy(builder => builder.Or<TimeoutRejectedException>().CircuitBreakerAsync(
+                    3,
+                    TimeSpan.FromSeconds(15)
+                ))
+                .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(1));
         }
     }
 }

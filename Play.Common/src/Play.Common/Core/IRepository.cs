@@ -12,7 +12,7 @@ namespace Play.Common.Core
         Task<TEntity> Get(TId id);
         Task<TEntity> Get(Expression<Func<TEntity, bool>> filter);
         Task<TId> Add(TEntity item);
-        Task Update(TId id, TEntity item);
+        Task Update(TEntity item);
         Task Remove(TId id);
     }
 }
