@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
+using Play.Catalog.Contracts;
 using Play.Catalog.Service.Data;
 using Play.Catalog.Service.Data.Entities;
 using Play.Common.Core;
@@ -14,10 +16,12 @@ namespace Play.Catalog.Service.Controllers
     public class ItemsController : ControllerBase
     {
         private readonly IRepository<Guid, Item> _repository;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public ItemsController(IRepository<Guid, Item> repository)
+        public ItemsController(IRepository<Guid, Item> repository, IPublishEndpoint publishEndpoint)
         {
             _repository = repository;
+            _publishEndpoint = publishEndpoint;
         }
         
         [HttpGet]
@@ -43,7 +47,7 @@ namespace Play.Catalog.Service.Controllers
         public async Task<ActionResult<ItemDto>> Create(CreateItemDto dto)
         {
             DateTimeOffset createdDate = DateTimeOffset.UtcNow;
-            Item itemToAdd = new()
+            Item item = new()
             {
                 Description = dto.Description,
                 Name = dto.Name,
@@ -52,10 +56,12 @@ namespace Play.Catalog.Service.Controllers
                 UpdatedDate = createdDate
             };
             
-            Guid createdItemId = await _repository.Add(itemToAdd);
-            itemToAdd.Id = createdItemId;
+            Guid createdItemId = await _repository.Add(item);
+            item.Id = createdItemId;
+
+            await _publishEndpoint.Publish(new CatalogItemCreated(item.Id, item.Name, item.Description, item.Price));
             
-            return CreatedAtAction(nameof(GetById), new { id = itemToAdd.Id }, itemToAdd);
+            return CreatedAtAction(nameof(GetById), new { id = item.Id }, item);
         }
 
         [HttpPut("{id:guid}")]
@@ -68,7 +74,7 @@ namespace Play.Catalog.Service.Controllers
                 return NotFound();
             }
 
-            Item itemToUpdate = new()
+            Item item = new()
             {
                 Id = existingItem.Id,
                 Description = dto.Description,
@@ -78,7 +84,8 @@ namespace Play.Catalog.Service.Controllers
                 UpdatedDate = DateTimeOffset.UtcNow
             };
             
-            await _repository.Update(id, itemToUpdate);
+            await _repository.Update(id, item);
+            await _publishEndpoint.Publish(new CatalogItemUpdated(item.Id, item.Name, item.Description, item.Price));
             
             return NoContent();
         }
@@ -94,6 +101,7 @@ namespace Play.Catalog.Service.Controllers
             }
             
             await _repository.Remove(id);
+            await _publishEndpoint.Publish(new CatalogItemDeleted(id));
             
             return NoContent();
         }
