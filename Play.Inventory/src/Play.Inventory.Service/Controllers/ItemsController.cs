@@ -38,7 +38,7 @@ namespace Play.Inventory.Service.Controllers
             
             IEnumerable<InventoryItemDto> inventoryItemsDtos = inventoryItems.Select(inventoryItem =>
             {
-                CatalogItem matchingCatalogItem = catalogItems.Single(catalogItem => catalogItem.Id == inventoryItem.Id);
+                CatalogItem matchingCatalogItem = catalogItems.Single(catalogItem => catalogItem.Id == inventoryItem.CatalogItemId);
                 return inventoryItem.AsDto(matchingCatalogItem.Name, matchingCatalogItem.Description);
             });
 
